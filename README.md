@@ -1,2 +1,2 @@
 # SR-Inpainting
-Matlab implementation of Hierarchical Super-Resolution-Based Inpainting
+An ongoing project based on the paper "Hierarchical Super-Resolution-Based Inpainting"
