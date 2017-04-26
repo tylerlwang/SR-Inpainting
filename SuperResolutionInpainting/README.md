@@ -1,0 +1,1 @@
+The super-solution inpainting is implemented based on Kwang In Kim and Younghee Kwon's project "Example-based Learning for Single-Image Super-resolution" (https://people.mpi-inf.mpg.de/~kkim/supres/supres.htm#References)
