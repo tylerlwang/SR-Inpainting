@@ -12,7 +12,7 @@ for i = 1 : 3  % R, G, B
     input(:, :, 2) = image2(:, :, i);
     input(:, :, 3) = image3(:, :, i);
     input(:, :, 4) = image4(:, :, i);
-    output(:, :, i) = beliefPropagate(input, 2000, 0.002);
+    output(:, :, i) = beliefPropagate(input, 100, 0.05);
 %     output(:, :, i) = meanOp(input);
 %     output(:, :, i) = medianOp(input);
 end
@@ -29,5 +29,3 @@ subplot(2,3,4)
 imshow('11x11.png');
 subplot(2,3,6)
 imshow(uint8(output));
-
-calcError(image1, image2

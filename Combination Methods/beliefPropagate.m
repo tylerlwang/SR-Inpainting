@@ -13,6 +13,7 @@ for i = 1 : X
         curr(i, j) = randi(N);
     end
 end
+fill = X * Y;
 for i = 1 : X
     for j = 1 : Y
         same = true;
@@ -24,6 +25,7 @@ for i = 1 : X
         end
         if same == true
             curr(i, j) = -1;
+            fill = fill - 1;
         end
     end
 end
@@ -80,7 +82,7 @@ while true
             end
         end
     end
-    if diff < X * Y * epsilon
+    if diff < fill * epsilon
         fprintf('It converges after %d iterations\n', iter);
         break;
     end

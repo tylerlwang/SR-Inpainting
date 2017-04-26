@@ -1,4 +1,4 @@
-function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaint7(imgFilename,fillFilename,fillColor,w,dataTerm)
+function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaint7(imgFilename,fillFilename,fillColor)
 %INPAINT  Exemplar-based inpainting.
 %
 % Usage:   [inpaintedImg,origImg,fillImg,C,D,fillMovie] ...
@@ -57,7 +57,7 @@ end
 rand('state',0);
 
 % Initialize patch size
-%w = 5;
+w = 5;
 
 % Loop until entire fill region has been covered
 while any(fillRegion(:))
@@ -74,26 +74,22 @@ while any(fillRegion(:))
   
   % Compute confidences along the fill front
   for k=dR'
-      Hp = getpatch(sz,k,w); % each value represents the index of pixel in image
-      q = Hp(~(fillRegion(Hp)));
-      C(k) = sum(C(q))/numel(Hp);
+    Hp = getpatch(sz,k,w); % each value represents the index of pixel in image
+    q = Hp(~(fillRegion(Hp)));
+    C(k) = sum(C(q))/numel(Hp);
   end
   
-  switch dataTerm
-      case 'tensor'
-          for k=dR'
-              Hp = getpatch(sz,k,w);
-              D(k) = getTensorDataTerm(img,Hp,w);
-          end
-          
-      case 'sparse'
-          for k=dR'
-              D(k) = getSparseDataTerm(img,k,w,sz,fillRegion);
-          end
+  swtich choice
+  
+end
+  for k=dR'
+     Hp = getpatch(sz,k,w);
+     D(k) = getTensorDataTerm(img,Hp,w);
   end
   
-  
-  
+  for k=dR'
+      D(k) = getSparseDataTerm(img,k,w,sz,fillRegion);
+  end
   
   % One way to calculate data term
   % D(dR) = abs(Ix(dR).*N(:,1)+Iy(dR).*N(:,2)) + 0.001;

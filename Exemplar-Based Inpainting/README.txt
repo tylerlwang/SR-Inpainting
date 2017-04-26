@@ -1,5 +1,3 @@
-The Exemplar-based Inpainting is implemented based on Sooraj Bhat's code. His original README is as follows.
-
 CS7495 Final Project
 Sooraj Bhat
 
