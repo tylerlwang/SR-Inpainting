@@ -1,31 +1,25 @@
 clear;
-image1 = double(imread('5x5.png'));
-image2 = double(imread('7x7.png'));
-image3 = double(imread('9x9.png'));
-image4 = double(imread('11x11.png'));
-[X, Y, Z] = size(image1);
-N = 4;
-output = zeros(size(image1));
-for i = 1 : 3  % R, G, B
-    input = zeros(X, Y, N);
-    input(:, :, 1) = image1(:, :, i);
-    input(:, :, 2) = image2(:, :, i);
-    input(:, :, 3) = image3(:, :, i);
-    input(:, :, 4) = image4(:, :, i);
-    output(:, :, i) = beliefPropagate(input, 100, 0.05);
-%     output(:, :, i) = meanOp(input);
-%     output(:, :, i) = medianOp(input);
+
+imagefiles = dir('set2/*.png');      
+nfiles = length(imagefiles);    % Number of files found
+for i = 1 : 13
+   currentfilename = imagefiles(i).name;
+   addr = [imagefiles(i).folder '/' currentfilename];
+   images(i).val = double(imread(addr));
+   % images{i} = currentimage;
 end
+
+[X, Y, RGB] = size(images(1).val);
+N = 13;
+output = zeros(X, Y, RGB);
+input = zeros(X, Y, RGB, N);
+for i = 1 : N
+    input(:, :, :, i) = images(i).val;
+end
+output = beliefPropagate(input, 100, 0.1);
+% output(:, :, i) = meanOp(input);
+% output(:, :, i) = medianOp(input);
 
 % imwrite(uint8(output), 'output.png');
 
-subplot(2,3,1)
-imshow('5x5.png');
-subplot(2,3,2)
-imshow('7x7.png');
-subplot(2,3,3)
-imshow('9x9.png');
-subplot(2,3,4)
-imshow('11x11.png');
-subplot(2,3,6)
 imshow(uint8(output));

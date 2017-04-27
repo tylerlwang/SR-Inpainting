@@ -1,12 +1,12 @@
-function output = beliefPropagate(input, lambda, epsilon)
+function output = beliefPropagate_deprecate(input, lambda, epsilon)
 % Input: n inpainted images of resolution x * y,
-% in the form of an x * y * 3 * n 4D matrix;
+% in the form of an x * y * n 3D matrix;
 % lambda: a factor weighing betweening label cost and discontinuity cost;
-% Ouput: A combined x * y * 3 3D matrix using loopy belief propagation.
+% Ouput: A combined x * y 2D matrix using loopy belief propagation.
 
 T = 1000;  % maximum iterations
-[X, Y, RGB, N] = size(input);
-prev = zeros(X, Y);  % index of the origin of each pixel, ranging from 1 to N
+[X, Y, N] = size(input);
+prev = zeros(X, Y);  % indices, ranging from 1 to N
 curr = zeros(X, Y);
 for t1 = 1 : 10
     for i = 1 : X
@@ -14,22 +14,19 @@ for t1 = 1 : 10
             curr(i, j) = randi(N);
         end
     end
-    fill = 0;
+    fill = X * Y;
     for i = 1 : X
         for j = 1 : Y
             same = true;
             for k = 2 : N
-                for rgb = 1 : 3
-                    if input(i, j, rgb, k) ~= input(i, j, rgb, 1)
-                        same = false;
-                        break;
-                    end
+                if input(i, j, k) ~= input(i, j, 1)
+                    same = false;
+                    break;
                 end
             end
             if same == true
                 curr(i, j) = -1;
-            else
-                fill = fill + 1;
+                fill = fill - 1;
             end
         end
     end
@@ -54,9 +51,7 @@ for t1 = 1 : 10
                                 if x <= 0 || x > X || y <= 0 || y > Y
                                     continue;
                                 end
-                                for rgb = 1 : 3
-                                    Vd(k) = Vd(k) + (input(x, y, rgb, k) - input(x, y, rgb, n)) ^ 2;
-                                end
+                                Vd(k) = Vd(k) + (input(x, y, k) - input(x, y, n)) ^ 2;
                             end
                         end
                     end
@@ -92,13 +87,9 @@ for t1 = 1 : 10
             for i = 1 : X
                 for j = 1 : Y
                     if curr(i, j) == -1
-                        for rgb = 1 : 3
-                            output(i, j, rgb) = input(i, j, rgb, 1);
-                        end
+                        output(i, j) = input(i, j, 1);
                     else
-                        for rgb = 1 : 3
-                            output(i, j, rgb) = input(i, j, rgb, curr(i, j));
-                        end
+                        output(i, j) = input(i, j, curr(i, j));
                     end
                 end
             end
