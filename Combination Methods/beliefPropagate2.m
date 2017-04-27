@@ -1,4 +1,4 @@
-function output = beliefPropagate(input, epsilon)
+function output = beliefPropagate2(input, epsilon)
 % Input: n inpainted images of resolution x * y,
 % in the form of an x * y * 3 * n 4D matrix;
 % epsilon: condition of convergence
