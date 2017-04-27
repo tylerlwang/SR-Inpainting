@@ -1,8 +1,7 @@
-function output = beliefPropagate(input, lambda, epsilon)
+function output = beliefPresent(input, lambda)
 % Input: n inpainted images of resolution x * y,
 % in the form of an x * y * 3 * n 4D matrix;
 % lambda: a factor weighing betweening label cost and discontinuity cost;
-% epsilon: condition of convergence
 % Ouput: A combined x * y * 3 3D matrix using loopy belief propagation.
 
 [X, Y, RGB, N] = size(input);
@@ -37,9 +36,8 @@ for i = 1 : X
         end
     end
 end
-energy = 0;
-for t = 1 : 20
-    energy(t) = 0;
+energy = zeros(1, 10);
+for t = 1 : 10
     prev = curr;
     for i = 1 : X
         for j = 1 : Y
@@ -93,20 +91,16 @@ for t = 1 : 20
             end
         end
     end
-    if diff < fill * epsilon
-        fprintf('It converges after %d iterations in round %d\n', t, t1);
-        tt = 1 : t;
-        plot(tt, energy);
-        output = zeros(X, Y);
-        for i = 1 : X
-            for j = 1 : Y
-                for rgb = 1 : 3
-                    output(i, j, rgb) = input(i, j, rgb, abs(curr(i, j)));
-                end
-            end
+end
+tt = 1 : 10;
+plot(tt, energy);
+output = zeros(X, Y);
+for i = 1 : X
+    for j = 1 : Y
+        for rgb = 1 : 3
+            output(i, j, rgb) = input(i, j, rgb, abs(curr(i, j)));
         end
-        return;
     end
 end
-fprintf('It does not converge.\n');
+return;
 end
