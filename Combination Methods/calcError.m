@@ -1,12 +1,11 @@
-function error = calcError(inpainted, gTruth, fillRegion)
-num = size(find(fillRegion, 1));
+function error = calcError(inpainted, gTruth)
 [X, Y, RGB] = size(inpainted);
 if X ~= size(gTruth, 1) || Y ~= size(gTruth, 2)
     fprintf('Error: Image sizes do not agree.\n');
     return;
 end
 error = 0;
-C = 100 / 255 ^ 2 / (num * 3);
+C = 100 / 255 ^ 2 / (X * Y * 3);
 for i = 1 : X
     for j = 1 : Y
         for k = 1 : 3

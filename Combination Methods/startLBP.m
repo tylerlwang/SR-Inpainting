@@ -1,6 +1,6 @@
 clear;
 
-imagefiles = dir('set2/*.png');      
+imagefiles = dir('set1/*.png');      
 nfiles = length(imagefiles);    % Number of files found
 for i = 1 : 13
    currentfilename = imagefiles(i).name;
@@ -18,8 +18,8 @@ for i = 1 : N
 end
 % output = beliefPropagate2(input, 0.001);
 output = beliefPropagate(input, 100, 0.1);
-% output(:, :, i) = meanOp(input);
-% output(:, :, i) = medianOp(input);
+% output = meanOp(input);
+% output = medianOp(input);
 
 % imwrite(uint8(output), 'output.png');
 
