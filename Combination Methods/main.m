@@ -16,6 +16,7 @@ input = zeros(X, Y, RGB, N);
 for i = 1 : N
     input(:, :, :, i) = images(i).val;
 end
+% output = beliefPropagate2(input, 0.001);
 output = beliefPropagate(input, 100, 0.1);
 % output(:, :, i) = meanOp(input);
 % output(:, :, i) = medianOp(input);

@@ -1,7 +1,6 @@
-function output = beliefPropagate(input, lambda, epsilon)
+function output = beliefPropagate(input, epsilon)
 % Input: n inpainted images of resolution x * y,
 % in the form of an x * y * 3 * n 4D matrix;
-% lambda: a factor weighing betweening label cost and discontinuity cost;
 % epsilon: condition of convergence
 % Ouput: A combined x * y * 3 3D matrix using loopy belief propagation.
 
@@ -67,8 +66,8 @@ for t1 = 1 : 10
                         if x <= 0 || x > X || y <= 0 || y > Y
                             continue;
                         end
-                        if prev(x, y) ~= -1 && prev(x, y) ~= k
-                            Vs(k) = Vs(k) + lambda;
+                        for rgb = 1 : 3
+                            Vs(k) = Vs(k) + (input(i, j, rgb, k) - input(x, y, rgb, abs(prev(x, y)))) ^ 2;
                         end
                     end
                     E(k) = Vd(k) + Vs(k);
