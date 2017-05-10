@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1341402849 source:/home/nghia/Projects/LoopyBP/main.cpp
+	<iostream>
+	<vector>
+	<string>
+	<opencv2/core/core.hpp>
+	<opencv2/highgui/highgui.hpp>
+
