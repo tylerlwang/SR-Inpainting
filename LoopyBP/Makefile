@@ -12,7 +12,7 @@ LD = clang++
 WINDRES = windres
 
 INC = 
-CFLAGS =  -Wall -I/usr/local/opt/opencv3/include
+CFLAGS =  -std=c++11 -Wall -I/usr/local/opt/opencv3/include
 RESINC = 
 LIBDIR = 
 LIB =  -lopencv_core -lopencv_highgui -lopencv_imgcodecs
