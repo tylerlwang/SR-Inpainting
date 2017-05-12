@@ -1,4 +1,4 @@
-function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaint7(imgFilename,fillFilename,fillColor,w,dataTerm)
+function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaintK(imgFilename,fillFilename,fillColor,w,dataTerm,K)
 %INPAINT  Exemplar-based inpainting.
 %
 % Usage:   [inpaintedImg,origImg,fillImg,C,D,fillMovie] ...
@@ -109,7 +109,7 @@ while any(fillRegion(:))
   toFill = fillRegion(Hp);
   
   % Find exemplar that minimizes error, Hq
-  Hq = bestexemplar(img,img(rows,cols,:),toFill',sourceRegion);
+  Hq = bestexemplar(img,img(rows,cols,:),toFill',sourceRegion,K);
   
   % Update fill region
   toFill = logical(toFill);                 % Marcel 11/30/05
@@ -117,13 +117,37 @@ while any(fillRegion(:))
   
   % Propagate confidence & isophote values
   C(Hp(toFill))  = C(p);
-  Ix(Hp(toFill)) = Ix(Hq(toFill));
-  Iy(Hp(toFill)) = Iy(Hq(toFill));
+  IxTemp = zeros(size(Hp(toFill)));
+  IyTemp = zeros(size(Hp(toFill)));
+  for i = 1:K
+      HqTemp = Hq(:,:,i); 
+      IxTemp = IxTemp + Ix(HqTemp(toFill));
+      IyTemp = IyTemp + Iy(HqTemp(toFill));
+  end
+  Ix(Hp(toFill)) = IxTemp/K;
+  Iy(Hp(toFill)) = IyTemp/K;
+%   Ix(Hp(toFill)) = (Ix(Hq1(toFill))+Ix(Hq2(toFill))+Ix(Hq3(toFill)))/3;
+%   Iy(Hp(toFill)) = (Iy(Hq1(toFill))+Iy(Hq2(toFill))+Iy(Hq3(toFill)))/3;
   
   % Copy image data from Hq to Hp
-  ind(Hp(toFill)) = ind(Hq(toFill));
-  img(rows,cols,:) = ind2img(ind(rows,cols),origImg);  
-
+  bestHq = Hq(:,:,1);
+  ind(Hp(toFill)) = ind(bestHq(toFill));
+  
+  imgTemp = zeros(size(rows,2),size(cols,1),3);
+  for i = 1:K
+      HqTemp = Hq(:,:,i);
+      indTemp = ind;
+      indTemp(Hp(toFill)) = ind(HqTemp(toFill));
+      imgTemp = imgTemp + ind2img(indTemp(rows,cols),origImg);
+  end
+  img(rows,cols,:) = imgTemp / K;
+  
+%   ind1(Hp(toFill)) = ind(Hq1(toFill));
+%   ind2(Hp(toFill)) = ind(Hq2(toFill));
+%   ind3(Hp(toFill)) = ind(Hq3(toFill));
+%   img(rows,cols,:) = (ind2img(ind1(rows,cols),origImg)+...
+%       ind2img(ind2(rows,cols),origImg)+ind2img(ind3(rows,cols),origImg))/3;
+  
   % Visualization stuff
   if nargout==6
     ind2 = ind;
@@ -135,17 +159,23 @@ while any(fillRegion(:))
   iter = iter+1;
 end
 
-inpaintedImg=img;
+inpaintedImg=uint8(img);
 
 
 %---------------------------------------------------------------------
 % Scans over the entire image (with a sliding window)
 % for the exemplar with the lowest error. Calls a MEX function.
 %---------------------------------------------------------------------
-function Hq = bestexemplar(img,Ip,toFill,sourceRegion)
+function Hq = bestexemplar(img,Ip,toFill,sourceRegion,K)
 m=size(Ip,1); mm=size(img,1); n=size(Ip,2); nn=size(img,2);
-best = bestexemplarhelper(mm,nn,m,n,img,Ip,toFill,sourceRegion);
-Hq = sub2ndx(best(1):best(2),(best(3):best(4))',mm);
+best = bestexemplarhelperK(mm,nn,m,n,K,img,Ip,toFill,sourceRegion);
+Hq = zeros(n,m,K);
+for i = 1:K
+   Hq(:,:,i) = sub2ndx(best(4*(i-1)+1):best(4*(i-1)+2),(best(4*(i-1)+3):best(4*(i-1)+4))',mm);
+end
+% Hq1 = sub2ndx(best(1):best(2),(best(3):best(4))',mm);
+% Hq2 = sub2ndx(best(5):best(6),(best(7):best(8))',mm);
+% Hq3 = sub2ndx(best(9):best(10),(best(11):best(12))',mm);
 
 
 %---------------------------------------------------------------------
