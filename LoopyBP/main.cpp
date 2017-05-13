@@ -74,9 +74,11 @@ int main() {
     }
   }
 
+  /*
   cv::namedWindow("main", CV_WINDOW_AUTOSIZE);
   cv::imshow("main", output);
   cv::waitKey(0);
+  */
 
   std::cout << "Saving results to output.png" << std::endl;
   cv::imwrite("output.png", output);
