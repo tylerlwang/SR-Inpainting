@@ -87,7 +87,7 @@ int main() {
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
   /*
   // Mean-based data cost
-  cv::Vec3b mean(0, 0, 0); 
+  cv::Vec3b mean(0, 0, 0);
   for (int i = 0; i < LABELS; i++) {
     mean += imgs[i].at<cv::Vec3b>(y, x);
   }
@@ -96,13 +96,13 @@ unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
 
   // Median-based data cost
   cv::Vec3b median;
-  std::vector<std::vector<unsigned>> data(3, std::vector<unsigned>(LABELS));
   for (int rgb = 0; rgb < 3; rgb++) {
+    std::vector<unsigned> data(LABELS);
     for (int i = 0; i < LABELS; i++) {
-      data[rgb][i] = imgs[i].at<cv::Vec3b>(y, x).val[rgb];
+      data[i] = imgs[i].at<cv::Vec3b>(y, x).val[rgb];
     }
-    sort(data[rgb].begin(), data[rgb].end());
-    median.val[rgb] = data[rgb][(LABELS + 1) / 2];
+    sort(data.begin(), data.end());
+    median.val[rgb] = data[(LABELS + 1) / 2];
   }
 
   cv::Vec3b curr = imgs[label].at<cv::Vec3b>(y, x);
