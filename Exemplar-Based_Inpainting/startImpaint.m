@@ -2,7 +2,7 @@ clear;
 w = [2 2 3 3 5 5 4 4 4 3 2 5 4]; % patch size = 2*w+1
 fillColor = [0 0 0];
 for i = 1:13
-    if i <= 8
+    if i <= 5
         dataTerm = 'sparse';
     else
         dataTerm = 'tensor';
@@ -15,6 +15,6 @@ for i = 1:13
         fillFilename = 'image2.png';
     end
     inpainted = inpaint7(imgFilename,fillFilename,fillColor,w(i),dataTerm);
-    name = [num2str(i) '_'];
+    name = [num2str(i) '_' num2str(2*w(i)+1) 'x' num2str(2*w(i)+1)];
     imwrite(uint8(inpainted),[name,'.png'])
 end

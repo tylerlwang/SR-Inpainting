@@ -1,4 +1,4 @@
-function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaint7(imgFilename,fillFilename,fillColor)
+function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaint3(imgFilename,fillFilename,fillColor,w,dataTerm)
 %INPAINT  Exemplar-based inpainting.
 %
 % Usage:   [inpaintedImg,origImg,fillImg,C,D,fillMovie] ...
@@ -57,7 +57,7 @@ end
 rand('state',0);
 
 % Initialize patch size
-w = 5;
+%w = 5;
 
 % Loop until entire fill region has been covered
 while any(fillRegion(:))
@@ -74,28 +74,33 @@ while any(fillRegion(:))
   
   % Compute confidences along the fill front
   for k=dR'
-    Hp = getpatch(sz,k,w); % each value represents the index of pixel in image
-    q = Hp(~(fillRegion(Hp)));
-    C(k) = sum(C(q))/numel(Hp);
+      Hp = getpatch(sz,k,w); % each value represents the index of pixel in image
+      q = Hp(~(fillRegion(Hp)));
+      C(k) = sum(C(q))/numel(Hp);
   end
   
-  swtich choice
-  
-end
-  for k=dR'
-     Hp = getpatch(sz,k,w);
-     D(k) = getTensorDataTerm(img,Hp,w);
+  switch dataTerm
+      case 'tensor'
+          for k=dR'
+              Hp = getpatch(sz,k,w);
+              D(k) = getTensorDataTerm(img,Hp,w);
+          end
+          
+      case 'sparse'
+          for k=dR'
+              D(k) = getSparseDataTerm(img,k,w,sz,fillRegion);
+          end
+          
+      case 'isophote'
+          D(dR) = abs(Ix(dR).*N(:,1)+Iy(dR).*N(:,2)) + 0.001;
+          
+      otherwise
+           warning('Unexpected dataTerm.')
   end
-  
-  for k=dR'
-      D(k) = getSparseDataTerm(img,k,w,sz,fillRegion);
-  end
-  
-  % One way to calculate data term
-  % D(dR) = abs(Ix(dR).*N(:,1)+Iy(dR).*N(:,2)) + 0.001;
   
   % Compute patch priorities = confidence term * data term
   priorities = C(dR).* D(dR);
+  
   
   % Find patch with maximum priority, Hp
   [unused,ndx] = max(priorities(:));
@@ -104,7 +109,7 @@ end
   toFill = fillRegion(Hp);
   
   % Find exemplar that minimizes error, Hq
-  Hq = bestexemplar(img,img(rows,cols,:),toFill',sourceRegion);
+  [Hq1,Hq2,Hq3] = bestexemplar(img,img(rows,cols,:),toFill',sourceRegion);
   
   % Update fill region
   toFill = logical(toFill);                 % Marcel 11/30/05
@@ -112,13 +117,19 @@ end
   
   % Propagate confidence & isophote values
   C(Hp(toFill))  = C(p);
-  Ix(Hp(toFill)) = Ix(Hq(toFill));
-  Iy(Hp(toFill)) = Iy(Hq(toFill));
+  Ix(Hp(toFill)) = (Ix(Hq1(toFill))+Ix(Hq2(toFill))+Ix(Hq3(toFill)))/3;
+  Iy(Hp(toFill)) = (Iy(Hq1(toFill))+Iy(Hq2(toFill))+Iy(Hq3(toFill)))/3;
   
   % Copy image data from Hq to Hp
-  ind(Hp(toFill)) = ind(Hq(toFill));
-  img(rows,cols,:) = ind2img(ind(rows,cols),origImg);  
-
+  ind1 = ind; ind2 = ind; ind3 = ind;
+  ind(Hp(toFill)) = ind(Hq1(toFill));
+  
+  ind1(Hp(toFill)) = ind(Hq1(toFill));
+  ind2(Hp(toFill)) = ind(Hq2(toFill));
+  ind3(Hp(toFill)) = ind(Hq3(toFill));
+  img(rows,cols,:) = (ind2img(ind1(rows,cols),origImg)+...
+      ind2img(ind2(rows,cols),origImg)+ind2img(ind3(rows,cols),origImg))/3;
+  
   % Visualization stuff
   if nargout==6
     ind2 = ind;
@@ -131,17 +142,19 @@ end
 end
 
 inpaintedImg=img;
-%imwrite(uint8(inpaintedImg),'HighResol1.png');
 
 
 %---------------------------------------------------------------------
 % Scans over the entire image (with a sliding window)
 % for the exemplar with the lowest error. Calls a MEX function.
 %---------------------------------------------------------------------
-function Hq = bestexemplar(img,Ip,toFill,sourceRegion)
+function [Hq1,Hq2,Hq3] = bestexemplar(img,Ip,toFill,sourceRegion)
 m=size(Ip,1); mm=size(img,1); n=size(Ip,2); nn=size(img,2);
-best = bestexemplarhelper(mm,nn,m,n,img,Ip,toFill,sourceRegion);
-Hq = sub2ndx(best(1):best(2),(best(3):best(4))',mm);
+best = bestexemplarhelper3(mm,nn,m,n,img,Ip,toFill,sourceRegion);
+Hq1 = sub2ndx(best(1):best(2),(best(3):best(4))',mm);
+Hq2 = sub2ndx(best(5):best(6),(best(7):best(8))',mm);
+Hq3 = sub2ndx(best(9):best(10),(best(11):best(12))',mm);
+
 
 
 %---------------------------------------------------------------------
@@ -210,12 +223,7 @@ for i = 1:3
    imgT = img(:,:,i);
    patch(:,:,i) = imgT(Hp);
 end
-% img1 = img(:,:,1);
-% img2 = img(:,:,2);
-% img3 = img(:,:,3);
-% patch(:,:,1) = img1(p);
-% patch(:,:,2) = img2(p);
-% patch(:,:,3) = img3(p);
+
 for i = 1:3
     [Ix,Iy]=gradient(patch(:,:,i));
     e1=0;e2=0;e3=0;e4=0;
@@ -231,10 +239,10 @@ e = eig(J);
 D = 0.01 + (1-0.01)*exp(-8/(e(1)-e(2))^2);
 
 function D = getSparseDataTerm(img,k,w,sz,fillRegion)
-% might need to add fillRegionInitial to static one
+% might need to add fillRegionInitial 
 image = 1/3*(img(:,:,1)+img(:,:,2)+img(:,:,3));
 patchP = getpatch(sz,k,w);
-window = getpatch(sz,k,20); %6w+3
+window = getpatch(sz,k,2*w); %6w+3
 N = numel(window);
 Ns = 0;
 sigma = 5;

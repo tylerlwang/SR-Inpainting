@@ -9,11 +9,11 @@
 #include "mex.h"
 #include <limits.h>
 
-void bestexemplarhelper(const int mm, const int nn, const int m, const int n, 
-			const double *img, const double *Ip, 
-			const mxLogical *toFill, const mxLogical *sourceRegion,
-			double *best) 
-{
+ void bestexemplarhelper(const int mm, const int nn, const int m, const int n, 
+   const double *img, const double *Ip, 
+   const mxLogical *toFill, const mxLogical *sourceRegion,
+   double *best) 
+ {
   register int i,j,ii,jj,ii2,jj2,M,N,I,J,ndx,ndx2,mn=m*n,mmnn=mm*nn;
   double patchErr=0.0,err=0.0,bestErr=1000000000.0;
 
@@ -26,29 +26,29 @@ void bestexemplarhelper(const int mm, const int nn, const int m, const int n,
       /*** Calculate patch error ***/
       /* foreach pixel in the current patch */
       for (jj=j,jj2=1; jj<=J; ++jj,++jj2) {
-	for (ii=i,ii2=1; ii<=I; ++ii,++ii2) {
-	  ndx=ii-1+mm*(jj-1);
-	  if (!sourceRegion[ndx])
-	    goto skipPatch;
-	  ndx2=ii2-1+m*(jj2-1);
-	  if (!toFill[ndx2]) {
-	    err=img[ndx      ] - Ip[ndx2    ]; patchErr += err*err;
-	    err=img[ndx+=mmnn] - Ip[ndx2+=mn]; patchErr += err*err;
-	    err=img[ndx+=mmnn] - Ip[ndx2+=mn]; patchErr += err*err;
-	  }
-	}
-      }
+       for (ii=i,ii2=1; ii<=I; ++ii,++ii2) {
+         ndx=ii-1+mm*(jj-1);
+         if (!sourceRegion[ndx])
+           goto skipPatch;
+         ndx2=ii2-1+m*(jj2-1);
+         if (!toFill[ndx2]) {
+           err=img[ndx      ] - Ip[ndx2    ]; patchErr += err*err;
+           err=img[ndx+=mmnn] - Ip[ndx2+=mn]; patchErr += err*err;
+           err=img[ndx+=mmnn] - Ip[ndx2+=mn]; patchErr += err*err;
+         }
+       }
+     }
       /*** Update ***/
-      if (patchErr < bestErr) {
-	bestErr = patchErr; 
-	best[0] = i; best[1] = I;
-	best[2] = j; best[3] = J;
-      }
+     if (patchErr < bestErr) {
+       bestErr = patchErr; 
+       best[0] = i; best[1] = I;
+       best[2] = j; best[3] = J;
+     }
       /*** Reset ***/
-    skipPatch:
-      patchErr = 0.0; 
-    }
-  }
+     skipPatch:
+     patchErr = 0.0; 
+   }
+ }
 }
 
 /* best = bestexemplarhelper(mm,nn,m,n,img,Ip,toFill,sourceRegion); */
