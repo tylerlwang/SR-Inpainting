@@ -36,7 +36,7 @@ unsigned MAP(MRF2D &mrf);
 int main() {
   std::vector<std::string> files(LABELS);
   for (int i = 0; i < LABELS; i++) {
-    files[i] = std::to_string(i + 1) + ".png";
+    files[i] = "../Datasets/workingset/" + std::to_string(i + 1) + ".png";
   }
   MRF2D mrf;
 
@@ -81,7 +81,7 @@ int main() {
   */
 
   std::cout << "Saving results to output.png" << std::endl;
-  cv::imwrite("output.png", output);
+  cv::imwrite("../Datasets/workingset/output.png", output);
 
   return 0;
 }
