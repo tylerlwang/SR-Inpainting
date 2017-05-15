@@ -18,6 +18,8 @@ LIBDIR =
 LIB =  -lopencv_core -lopencv_highgui -lopencv_imgcodecs
 LDFLAGS =  -L/usr/local/opt/opencv3/lib
 
+SOURCE = main_contour.cpp
+
 INC_DEBUG =  $(INC)
 CFLAGS_DEBUG =  $(CFLAGS) -g
 RESINC_DEBUG =  $(RESINC)
@@ -38,7 +40,7 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE =  $(LDFLAGS) -s
 OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
-OUT_RELEASE = LoopyBP
+OUT_RELEASE = main
 
 OBJ_DEBUG = $(OBJDIR_DEBUG)/main.o
 
@@ -59,8 +61,8 @@ debug: before_debug out_debug after_debug
 out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LDFLAGS_DEBUG) $(LIBDIR_DEBUG) $(OBJ_DEBUG) $(LIB_DEBUG) -o $(OUT_DEBUG)
 
-$(OBJDIR_DEBUG)/main.o: main.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c main.cpp -o $(OBJDIR_DEBUG)/main.o
+$(OBJDIR_DEBUG)/main.o: $(SOURCE)
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c $(SOURCE) -o $(OBJDIR_DEBUG)/main.o
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
@@ -78,8 +80,8 @@ release: before_release out_release after_release
 out_release: $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LDFLAGS_RELEASE) $(LIBDIR_RELEASE) $(OBJ_RELEASE) $(LIB_RELEASE) -o $(OUT_RELEASE)
 
-$(OBJDIR_RELEASE)/main.o: main.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c main.cpp -o $(OBJDIR_RELEASE)/main.o
+$(OBJDIR_RELEASE)/main.o: $(SOURCE)
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c $(SOURCE) -o $(OBJDIR_RELEASE)/main.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)

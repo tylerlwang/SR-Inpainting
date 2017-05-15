@@ -9,9 +9,11 @@ enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 
 // parameters, specific to dataset
 const int BP_ITERATIONS = 40;
-const cv::Vec3b FILL_COLOR = {0, 255, 0};
+const int GAMMA = 1;
 const int LABELS = 13;
 const int LAMBDA = 100;
+const std::string DIRECTORY = "../Datasets/workingset/";
+const cv::Vec3b FILL_COLOR = {0, 255, 0};
 
 struct Pixel {
   // Each pixel has 5 'message box' to store incoming data
@@ -25,45 +27,51 @@ struct MRF2D {
 };
 
 // Application specific code
-void InitDataCost(const std::vector<cv::Mat> &imgs, MRF2D &mrf);
+void InitDataCost(const std::vector<cv::Mat> &imgs, const cv::Mat &fill_region,
+                  MRF2D &mrf);
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label);
-unsigned SmoothnessCost(int i, int j);
+unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
+                        int j, DIRECTION direction);
+unsigned ContourCost(cv::Mat region, int label);
 
 // Loppy belief propagation specific
-void BP(MRF2D &mrf, DIRECTION direction);
-void SendMsg(MRF2D &mrf, int x, int y, DIRECTION direction);
-unsigned MAP(MRF2D &mrf);
+void BP(const std::vector<cv::Mat> &imgs, MRF2D &mrf, DIRECTION direction);
+void SendMsg(const std::vector<cv::Mat> &imgs, MRF2D &mrf, int x, int y,
+             DIRECTION direction);
+unsigned MAP(const std::vector<cv::Mat> &imgs, MRF2D &mrf);
 
 int main() {
-  std::vector<std::string> files(LABELS);
-  for (int i = 0; i < LABELS; i++) {
-    files[i] = "../Datasets/workingset/" + std::to_string(i + 1) + ".png";
-  }
-  MRF2D mrf;
-
   std::vector<cv::Mat> imgs(LABELS);
   for (int i = 0; i < LABELS; i++) {
-    imgs[i] = cv::imread(files[i].c_str(), 1);
+    std::string file = DIRECTORY + std::to_string(i + 1) + ".png";
+    imgs[i] = cv::imread(file.c_str(), 1);
     if (!imgs[i].data) {
       std::cerr << "Error reading image " << i + 1 << std::endl;
       exit(1);
     }
   }
-
   assert(imgs[0].channels() == 3);
+  std::string region_file = DIRECTORY + "fill_region.png";
+  cv::Mat fill_region = cv::imread(region_file.c_str(), 1);
+  if (!fill_region.data) {
+    std::cerr << "Error reading fill_region" << std::endl;
+    exit(1);
+  }
 
-  InitDataCost(imgs, mrf);
+  MRF2D mrf;
+
+  InitDataCost(imgs, fill_region, mrf);
 
   for (int i = 0; i < BP_ITERATIONS; i++) {
-    BP(mrf, RIGHT);
-    BP(mrf, LEFT);
-    BP(mrf, UP);
-    BP(mrf, DOWN);
+    BP(imgs, mrf, RIGHT);
+    BP(imgs, mrf, LEFT);
+    BP(imgs, mrf, UP);
+    BP(imgs, mrf, DOWN);
 
-    unsigned energy = MAP(mrf);
+    unsigned energy = MAP(imgs, mrf);
 
     std::cout << "iteration " << (i + 1) << "/" << BP_ITERATIONS
-         << ", energy = " << energy << std::endl;
+              << ", energy = " << energy << std::endl;
   }
 
   cv::Mat output = cv::Mat::zeros(mrf.height, mrf.width, CV_8UC3);
@@ -82,25 +90,29 @@ int main() {
   */
 
   std::cout << "Saving results to output.png" << std::endl;
-  cv::imwrite("../Datasets/workingset/output.png", output);
+  cv::imwrite(DIRECTORY + "output.png", output);
 
   return 0;
 }
 
-
-
-unsigned ContourCost(const std::vector<cv::Mat> &contours,
-                     const std::vector<std::vector<bool>> &fillRegion) {
-  /*
-  cv::Mat contour = cv::imread(contourFile.c_str(), 0);
+unsigned ContourCost(cv::Mat region, int label) {
+  std::string filename =
+      DIRECTORY + "contour" + std::to_string(label + 1) + ".png";
+  cv::Mat contour = cv::imread(filename.c_str(), 0);
   if (!contour.data) {
-    std::cerr << "Error reading image " << i + 1 << std::endl;
+    std::cerr << "Error reading contour " << label + 1 << std::endl;
     exit(1);
   }
-  */
-  for (int i = 0; i < LABELS; i++) {
-    for 
+  unsigned cost = 0;
+  for (int y = 0; y < region.rows; y++) {
+    for (int x = 0; x < region.cols; x++) {
+      if (region.at<cv::Vec3b>(y, x) == FILL_COLOR) {
+        unsigned value = std::max(0, contour.at<uchar>(y, x) - 128);
+        cost -= value * value;
+      }
+    }
   }
+  return GAMMA * cost;
 }
 
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
@@ -132,11 +144,46 @@ unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
   return cost;
 }
 
-unsigned SmoothnessCost(int i, int j) {
-  return LAMBDA * abs(i - j);
+unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
+                        int j, DIRECTION direction) {
+  // Label-based smoothness cost
+  // return i == j ? 0 : LAMBDA;
+
+  // Value-based smoothness cost
+  unsigned cost = 0;
+  for (int rgb = 0; rgb < 3; rgb++) {
+    unsigned x_i = imgs[i].at<cv::Vec3b>(y, x).val[rgb];
+
+    unsigned x_j;
+    switch (direction) {
+      case LEFT:
+        x_j = imgs[j].at<cv::Vec3b>(y, x - 1).val[rgb];
+        break;
+
+      case RIGHT:
+        x_j = imgs[j].at<cv::Vec3b>(y, x + 1).val[rgb];
+        break;
+
+      case UP:
+        x_j = imgs[j].at<cv::Vec3b>(y - 1, x).val[rgb];
+        break;
+
+      case DOWN:
+        x_j = imgs[j].at<cv::Vec3b>(y + 1, x).val[rgb];
+        break;
+
+      default:
+        assert(0);
+        break;
+    }
+
+    cost += (x_i - x_j) * (x_i - x_j) / 3;
+  }
+  return cost;
 }
 
-void InitDataCost(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
+void InitDataCost(const std::vector<cv::Mat> &imgs, const cv::Mat &fill_region,
+                  MRF2D &mrf) {
   // Cache the data cost results so we don't have to recompute it every time
 
   mrf.width = imgs[0].cols;
@@ -158,13 +205,15 @@ void InitDataCost(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
   for (int y = 0; y < mrf.height; y++) {
     for (int x = 0; x < mrf.width; x++) {
       for (int i = 0; i < LABELS; i++) {
-        mrf.grid[y * imgs[0].cols + x].msg[DATA][i] = DataCost(imgs, x, y, i);
+        mrf.grid[y * imgs[0].cols + x].msg[DATA][i] =
+            DataCost(imgs, x, y, i) + ContourCost(fill_region, i);
       }
     }
   }
 }
 
-void SendMsg(MRF2D &mrf, int x, int y, DIRECTION direction) {
+void SendMsg(const std::vector<cv::Mat> &imgs, MRF2D &mrf, int x, int y,
+             DIRECTION direction) {
   unsigned new_msg[LABELS];
 
   int width = mrf.width;
@@ -175,7 +224,7 @@ void SendMsg(MRF2D &mrf, int x, int y, DIRECTION direction) {
     for (int j = 0; j < LABELS; j++) {
       unsigned p = 0;
 
-      p += SmoothnessCost(i, j);
+      p += SmoothnessCost(imgs, x, y, i, j, direction);
       p += mrf.grid[y * width + x].msg[DATA][j];
 
       // Exclude the incoming message direction that we are sending to
@@ -215,7 +264,7 @@ void SendMsg(MRF2D &mrf, int x, int y, DIRECTION direction) {
   }
 }
 
-void BP(MRF2D &mrf, DIRECTION direction) {
+void BP(const std::vector<cv::Mat> &imgs, MRF2D &mrf, DIRECTION direction) {
   int width = mrf.width;
   int height = mrf.height;
 
@@ -223,7 +272,7 @@ void BP(MRF2D &mrf, DIRECTION direction) {
     case RIGHT:
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width - 1; x++) {
-          SendMsg(mrf, x, y, direction);
+          SendMsg(imgs, mrf, x, y, direction);
         }
       }
       break;
@@ -231,7 +280,7 @@ void BP(MRF2D &mrf, DIRECTION direction) {
     case LEFT:
       for (int y = 0; y < height; y++) {
         for (int x = width - 1; x >= 1; x--) {
-          SendMsg(mrf, x, y, direction);
+          SendMsg(imgs, mrf, x, y, direction);
         }
       }
       break;
@@ -239,7 +288,7 @@ void BP(MRF2D &mrf, DIRECTION direction) {
     case DOWN:
       for (int x = 0; x < width; x++) {
         for (int y = 0; y < height - 1; y++) {
-          SendMsg(mrf, x, y, direction);
+          SendMsg(imgs, mrf, x, y, direction);
         }
       }
       break;
@@ -247,7 +296,7 @@ void BP(MRF2D &mrf, DIRECTION direction) {
     case UP:
       for (int x = 0; x < width; x++) {
         for (int y = height - 1; y >= 1; y--) {
-          SendMsg(mrf, x, y, direction);
+          SendMsg(imgs, mrf, x, y, direction);
         }
       }
       break;
@@ -258,7 +307,7 @@ void BP(MRF2D &mrf, DIRECTION direction) {
   }
 }
 
-unsigned MAP(MRF2D &mrf) {
+unsigned MAP(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
   // Finds the MAP assignment as well as calculating the energy
 
   // MAP assignment
@@ -294,17 +343,21 @@ unsigned MAP(MRF2D &mrf) {
       energy += mrf.grid[y * width + x].msg[DATA][cur_label];
 
       if (x - 1 >= 0)
-        energy += SmoothnessCost(cur_label,
-                                 mrf.grid[y * width + x - 1].best_assignment);
+        energy +=
+            SmoothnessCost(imgs, x, y, cur_label,
+                           mrf.grid[y * width + x - 1].best_assignment, LEFT);
       if (x + 1 < width)
-        energy += SmoothnessCost(cur_label,
-                                 mrf.grid[y * width + x + 1].best_assignment);
+        energy +=
+            SmoothnessCost(imgs, x, y, cur_label,
+                           mrf.grid[y * width + x + 1].best_assignment, RIGHT);
       if (y - 1 >= 0)
-        energy += SmoothnessCost(cur_label,
-                                 mrf.grid[(y - 1) * width + x].best_assignment);
+        energy +=
+            SmoothnessCost(imgs, x, y, cur_label,
+                           mrf.grid[(y - 1) * width + x].best_assignment, UP);
       if (y + 1 < height)
-        energy += SmoothnessCost(cur_label,
-                                 mrf.grid[(y + 1) * width + x].best_assignment);
+        energy +=
+            SmoothnessCost(imgs, x, y, cur_label,
+                           mrf.grid[(y + 1) * width + x].best_assignment, DOWN);
     }
   }
 
