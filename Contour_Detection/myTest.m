@@ -19,7 +19,7 @@ for ind = 1:13
     
     %figure; 
     %imshow(max(gPb_orient,[],3)); 
-    colormap(jet);
+    %colormap(jet);
     
     ucm(:,:,ind) = contours2ucm(gPb_orient, 'imageSize');
     temp = ucm(:,:,ind);

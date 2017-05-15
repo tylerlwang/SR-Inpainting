@@ -10,14 +10,14 @@ fillRegion = fillImg(:,:,1)==fillColor(1) & ...
     fillImg(:,:,2)==fillColor(2) & fillImg(:,:,3)==fillColor(3);
 ucm = zeros(size(fillImg,1),size(fillImg,2),13);
 
-for ind = 1:8
+for ind = 1:13
     imgFile = ['output/' num2str(ind) '.mat'];
     load(imgFile);
     ucm(:,:,ind) = contours2ucm(gPb_orient, 'imageSize');
     temp = ucm(:,:,ind);
     %figure;imshow(temp);
     %temp = processImg(temp);
-    subplot(2,4,ind); imshow(temp);
+    subplot(4,4,ind); imshow(temp);
     rs(ind) = numel(find(temp(fillRegion)));
 end
 function temp = processImg(temp)
