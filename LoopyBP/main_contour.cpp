@@ -5,6 +5,10 @@
 #include <string>
 #include <vector>
 
+/* The following files are the input of this program and should be store in
+ * DIRECTORY: fill_region.png; 1.png, 2.png, ..., 13.png; contour1.png,
+ * contour2.png, ..., contour13.png */
+
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 
 // parameters, specific to dataset
@@ -116,13 +120,19 @@ unsigned ContourCost(cv::Mat region, int label) {
 }
 
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
+  cv::Vec3b curr = imgs[label].at<cv::Vec3b>(y, x);
+  unsigned cost = 0;
+
   /*
-  // Mean-based data cost
-  cv::Vec3b mean(0, 0, 0);
+  // Sum-of-square-differences data cost
   for (int i = 0; i < LABELS; i++) {
-    mean += imgs[i].at<cv::Vec3b>(y, x);
+    cv::Vec3b other = imgs[i].at<cv::Vec3b>(y, x);
+    for (int rgb = 0; rgb < 3; rgb++) {
+      cost += (curr.val[rgb] - other.val[rgb]) *
+              (curr.val[rgb] - other.val[rgb]) / (LABELS * 3);
+    }
   }
-  mean /= LABELS;
+  return cost;
   */
 
   // Median-based data cost
@@ -135,9 +145,6 @@ unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
     sort(data.begin(), data.end());
     median.val[rgb] = data[(LABELS + 1) / 2];
   }
-
-  cv::Vec3b curr = imgs[label].at<cv::Vec3b>(y, x);
-  unsigned cost = 0;
   for (int rgb = 0; rgb < 3; rgb++) {
     cost += abs(curr.val[rgb] - median.val[rgb]) / 3;
   }
@@ -179,7 +186,7 @@ unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
 
     cost += (x_i - x_j) * (x_i - x_j) / 3;
   }
-  return cost;
+  return LAMBDA * cost;
 }
 
 void InitDataCost(const std::vector<cv::Mat> &imgs, const cv::Mat &fill_region,

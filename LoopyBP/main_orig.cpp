@@ -5,12 +5,17 @@
 #include <string>
 #include <vector>
 
+/* The following files are the input of this program and should be store in
+ * DIRECTORY: fill_region.png; 1.png, 2.png, ..., 13.png; contour1.png,
+ * contour2.png, ..., contour13.png */
+
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 
 // parameters, specific to dataset
 const int BP_ITERATIONS = 40;
 const int LABELS = 13;
 const int LAMBDA = 100;
+const std::string DIRECTORY = "../Datasets/workingset/";
 
 struct Pixel {
   // Each pixel has 5 'message box' to store incoming data
@@ -34,22 +39,18 @@ void SendMsg(MRF2D &mrf, int x, int y, DIRECTION direction);
 unsigned MAP(MRF2D &mrf);
 
 int main() {
-  std::vector<std::string> files(LABELS);
-  for (int i = 0; i < LABELS; i++) {
-    files[i] = "../Datasets/workingset/" + std::to_string(i + 1) + ".png";
-  }
-  MRF2D mrf;
-
   std::vector<cv::Mat> imgs(LABELS);
   for (int i = 0; i < LABELS; i++) {
-    imgs[i] = cv::imread(files[i].c_str(), 1);
+    std::string file = DIRECTORY + std::to_string(i + 1) + ".png";
+    imgs[i] = cv::imread(file.c_str(), 1);
     if (!imgs[i].data) {
       std::cerr << "Error reading image " << i + 1 << std::endl;
       exit(1);
     }
   }
-
   assert(imgs[0].channels() == 3);
+
+  MRF2D mrf;
 
   InitDataCost(imgs, mrf);
 
@@ -81,21 +82,26 @@ int main() {
   */
 
   std::cout << "Saving results to output.png" << std::endl;
-  cv::imwrite("../Datasets/workingset/output.png", output);
+  cv::imwrite(DIRECTORY + "output.png", output);
 
   return 0;
 }
 
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
-  /*
-  // Mean-based data cost
-  cv::Vec3b mean(0, 0, 0);
-  for (int i = 0; i < LABELS; i++) {
-    mean += imgs[i].at<cv::Vec3b>(y, x);
-  }
-  mean /= LABELS;
-  */
+  cv::Vec3b curr = imgs[label].at<cv::Vec3b>(y, x);
+  unsigned cost = 0;
 
+  // Sum-of-square-differences data cost
+  for (int i = 0; i < LABELS; i++) {
+    cv::Vec3b other = imgs[i].at<cv::Vec3b>(y, x);
+    for (int rgb = 0; rgb < 3; rgb++) {
+      cost += (curr.val[rgb] - other.val[rgb]) *
+              (curr.val[rgb] - other.val[rgb]) / (LABELS * 3);
+    }
+  }
+  return cost;
+
+  /*
   // Median-based data cost
   cv::Vec3b median;
   for (int rgb = 0; rgb < 3; rgb++) {
@@ -106,13 +112,11 @@ unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
     sort(data.begin(), data.end());
     median.val[rgb] = data[(LABELS + 1) / 2];
   }
-
-  cv::Vec3b curr = imgs[label].at<cv::Vec3b>(y, x);
-  unsigned cost = 0;
   for (int rgb = 0; rgb < 3; rgb++) {
     cost += abs(curr.val[rgb] - median.val[rgb]) / 3;
   }
   return cost;
+  */
 }
 
 unsigned SmoothnessCost(int i, int j) {

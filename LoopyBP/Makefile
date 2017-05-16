@@ -18,7 +18,7 @@ LIBDIR =
 LIB =  -lopencv_core -lopencv_highgui -lopencv_imgcodecs
 LDFLAGS =  -L/usr/local/opt/opencv3/lib
 
-SOURCE = main_contour.cpp
+SOURCE = main_orig.cpp
 
 INC_DEBUG =  $(INC)
 CFLAGS_DEBUG =  $(CFLAGS) -g
