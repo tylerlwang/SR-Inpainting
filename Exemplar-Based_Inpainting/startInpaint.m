@@ -11,19 +11,21 @@ for i = 1:13
     if any(i == [2 4 6 8 10 12])
         %imgFilename = 'img1R.png';
         %fillFilename = 'img2R.png';
-        imgFilename = 'B1.png';
-        fillFilename = 'B1.png';
+        imgFilename = 'fill_region.png';
+        fillFilename = 'fill_region.png';
         K = 3;
     else
-        imgFilename = 'B1.png';
-        fillFilename = 'B1.png';
+        imgFilename = 'fill_region.png';
+        fillFilename = 'fill_region.png';
         K = 1;
     end
     inpainted = inpaintK(imgFilename,fillFilename,fillColor,w(i),dataTerm,K);
     name = ['../Datasets/workingset/' num2str(i)];
     imwrite(uint8(inpainted),[name,'.png'])
 end
-command = 'cd ../LoopyBP; ./LoopyBP';
+command = ['cp fill_region.png ../Datasets/workingset/']
+system(command);
+command = 'cd ../LoopyBP && ./loopyBP';
 system(command);
 mkdir('../Datasets/',['setNew' num2str(3)]);
 command = ['mv ../Datasets/workingset/* ../Datasets/setNew' num2str(3)];

@@ -15,6 +15,9 @@ for ind = 1:13
     outFile = ['output/' num2str(ind) '.mat'];
     
     gPb_orient = globalPb(imgFile, outFile);
+    load(outFile);
+    image = mat2gray(255 * gPb_thin);
+    imshow(image);
     %delete(outFile);
     
     %figure; 
