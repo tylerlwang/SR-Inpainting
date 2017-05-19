@@ -18,7 +18,7 @@ LIBDIR =
 LIB =  -lopencv_core -lopencv_highgui -lopencv_imgcodecs
 LDFLAGS =  -L/usr/local/opt/opencv3/lib
 
-SOURCE = main_orig.cpp
+SOURCE = main_contour.cpp
 
 INC_DEBUG =  $(INC)
 CFLAGS_DEBUG =  $(CFLAGS) -g
@@ -40,7 +40,7 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE =  $(LDFLAGS) -s
 OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
-OUT_RELEASE = bp_orig
+OUT_RELEASE = bp_contour
 
 OBJ_DEBUG = $(OBJDIR_DEBUG)/main.o
 

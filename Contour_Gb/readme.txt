@@ -3,6 +3,10 @@ author: Marius Leordeanu
 
 Note: each function has explanations for its own input/output 
 
+Our main functin to calculate contour costs:
+
+calculate_cost.m
+
 Main functions:
 
 1. Gb_CSG( image ) - this is the main function, it outputs the gb boundaries using color, soft-segmentation, and geometric/contour features. It takes as input the color image 

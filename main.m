@@ -20,10 +20,17 @@ cd Exemplar-Based_Inpainting;
 %     imwrite(uint8(inpainted), ['../Datasets/Current/', num2str(i), '.png']);
 % end
 
-% 2. Run C++ programs loopy belief propagation
+% 2. Calculate contour-based costs
+cd ../Contour_Gb
+calculate_cost;
+
+% 3. Run C++ programs loopy belief propagation
 cd ../LoopyBP;
 system('./bp_orig');
+system('./bp_improved');
+system('./bp_contour');
+delete ../Datasets/Current/contour_cost.txt
 
-% 3. Draw ROC(Receiver Operating Characteristic) graphs
+% 4. Draw ROC(Receiver Operating Characteristic) graphs
 cd ../Datasets/Current;
 

@@ -19,7 +19,7 @@ for ind = 1:13
     % edgeComponents(linearIndices) = 0;
     weights(ind) = nnz(edgeComponents) / nnz(mask);
 end
-fid = fopen('../Datasets/Current/weights.txt', 'wt');
+fid = fopen('../Datasets/Current/contour_cost.txt', 'wt');
 fprintf(fid,'%f\n',weights);
 fclose(fid);
 % output_image_2 = imread('5.png');
