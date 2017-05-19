@@ -1,21 +1,22 @@
 clear;
 
 % 1. Perform exemplar-based inpainting 13 times
-w = [2 2 3 3 5 5 4 4 4 3 2 5 4];  % patch size = 2 * w + 1
-fillColor = [0 255 0];
+w = [2 2 3 3 4 4 5 5 6 6 7 7 8];  % patch size = 2 * w + 1
+fillColor = [255 255 255];
 cd Exemplar-Based_Inpainting;
-for i = 1 : 13
-    if i <= 6
+parfor i = 1 : 13
+    if any(i == [1 3 5 7 9 11])
         dataTerm = 'isophote';
     else
         dataTerm = 'tensor';
     end
-    imgFilename = '../Datasets/Current/input.png';
+    imgFilename = '../Datasets/Current/groundTruth.png';
+    fillFilename = '../Datasets/Current/input.png';
     K = 1;
-    inpainted = inpaintK(imgFilename, imgFilename, fillColor, w(i), dataTerm, K);
+    inpainted = inpaintK(imgFilename, fillFilename, fillColor, w(i), dataTerm, K);
     imwrite(uint8(inpainted), ['../Datasets/Current/orig', num2str(i), '.png']);
     K = 3;
-    inpainted = inpaintK(imgFilename, imgFilename, fillColor, w(i), dataTerm, K);
+    inpainted = inpaintK(imgFilename, fillFilename, fillColor, w(i), dataTerm, K);
     imwrite(uint8(inpainted), ['../Datasets/Current/topk', num2str(i), '.png']);
 end
 

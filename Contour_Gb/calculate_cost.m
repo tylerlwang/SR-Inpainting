@@ -4,7 +4,7 @@
 clear;
 original_image = imread('../Datasets/Current/input.png');
 % mask = (original_image(:,:,2) == 255);
-fillColor = [0 255 0];
+fillColor = [255 255 255];
 mask = original_image(:,:,1)==fillColor(1) & ...
     original_image(:,:,2)==fillColor(2) & original_image(:,:,3)==fillColor(3);
 weights = zeros(13,1);

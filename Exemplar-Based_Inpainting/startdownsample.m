@@ -1,14 +1,14 @@
 clear;
-imgOri = imread('B0.png');
-imgIn = imread('B1.png');
+imgOri = imread('../Datasets/Current/groundTruth.png');
+imgIn = imread('../Datasets/Current/input.png');
 
 factor = 2;
 Ori = imresize(imgOri,1/factor,'lanczos3');
 %In = imresize(imgIn,1/factor,'lanczos3');
 % Ori = imgOri(1:factor:end,1:factor:end,:);
 In = imgIn(1:factor:end,1:factor:end,:);
-imwrite(Ori,'img1.png');
-imwrite(In,'img2.png');
+imwrite(Ori,'../Datasets/Current/groundTruth.png');
+imwrite(In,'../Datasets/Current/input.png');
 
 
 
