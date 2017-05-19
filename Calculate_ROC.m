@@ -32,3 +32,5 @@ for i = 1:3
     hold on
 end
 legend('original','improved','contour');
+xlabel('Threshold')
+ylabel('Rate of Correctness')
