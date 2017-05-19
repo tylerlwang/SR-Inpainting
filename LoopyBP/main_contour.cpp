@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -6,18 +7,16 @@
 #include <vector>
 
 /* The following files are the input of this program and should be store in
- * DIRECTORY: input.png; 1.png, 2.png, ..., 13.png; contour1.png,
- * contour2.png, ..., contour13.png */
+ * DIRECTORY: input.png; 1.png, 2.png, ..., 13.png; contour_cost.txt */
 
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 
 // parameters, specific to dataset
 const int BP_ITERATIONS = 40;
-const int GAMMA = 1;
 const int LABELS = 13;
-const int LAMBDA = 100;
+const int LAMBDA = 10;
+const int GAMMA = 100;
 const std::string DIRECTORY = "../Datasets/current/";
-const cv::Vec3b FILL_COLOR = {0, 255, 0};
 
 struct Pixel {
   // Each pixel has 5 'message box' to store incoming data
@@ -31,12 +30,10 @@ struct MRF2D {
 };
 
 // Application specific code
-void InitDataCost(const std::vector<cv::Mat> &imgs, const cv::Mat &fill_region,
-                  MRF2D &mrf);
+void InitDataCost(const std::vector<cv::Mat> &imgs, MRF2D &mrf);
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label);
 unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
                         int j, DIRECTION direction);
-unsigned ContourCost(cv::Mat region, int label);
 
 // Loppy belief propagation specific
 void BP(const std::vector<cv::Mat> &imgs, MRF2D &mrf, DIRECTION direction);
@@ -55,16 +52,10 @@ int main() {
     }
   }
   assert(imgs[0].channels() == 3);
-  std::string region_file = DIRECTORY + "fill_region.png";
-  cv::Mat fill_region = cv::imread(region_file.c_str(), 1);
-  if (!fill_region.data) {
-    std::cerr << "Error reading fill_region" << std::endl;
-    exit(1);
-  }
 
   MRF2D mrf;
 
-  InitDataCost(imgs, fill_region, mrf);
+  InitDataCost(imgs, mrf);
 
   for (int i = 0; i < BP_ITERATIONS; i++) {
     BP(imgs, mrf, RIGHT);
@@ -75,7 +66,7 @@ int main() {
     unsigned energy = MAP(imgs, mrf);
 
     std::cout << "iteration " << (i + 1) << "/" << BP_ITERATIONS
-              << ", energy = " << energy << std::endl;
+         << ", energy = " << energy << std::endl;
   }
 
   cv::Mat output = cv::Mat::zeros(mrf.height, mrf.width, CV_8UC3);
@@ -94,29 +85,9 @@ int main() {
   */
 
   std::cout << "Saving results to output.png" << std::endl;
-  cv::imwrite(DIRECTORY + "output.png", output);
+  cv::imwrite(DIRECTORY + "output_contour.png", output);
 
   return 0;
-}
-
-unsigned ContourCost(cv::Mat region, int label) {
-  std::string filename =
-      DIRECTORY + "contour" + std::to_string(label + 1) + ".png";
-  cv::Mat contour = cv::imread(filename.c_str(), 0);
-  if (!contour.data) {
-    std::cerr << "Error reading contour " << label + 1 << std::endl;
-    exit(1);
-  }
-  unsigned cost = 0;
-  for (int y = 0; y < region.rows; y++) {
-    for (int x = 0; x < region.cols; x++) {
-      if (region.at<cv::Vec3b>(y, x) == FILL_COLOR) {
-        unsigned value = std::max(0, contour.at<uchar>(y, x) - 128);
-        cost -= value * value;
-      }
-    }
-  }
-  return GAMMA * cost;
 }
 
 unsigned DataCost(const std::vector<cv::Mat> &imgs, int x, int y, int label) {
@@ -186,12 +157,21 @@ unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
 
     cost += (x_i - x_j) * (x_i - x_j) / 3;
   }
-  return LAMBDA * cost;
+  return cost / LAMBDA;
 }
 
-void InitDataCost(const std::vector<cv::Mat> &imgs, const cv::Mat &fill_region,
-                  MRF2D &mrf) {
+void InitDataCost(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
   // Cache the data cost results so we don't have to recompute it every time
+
+  // Initialize the data cost with a contour-based term read from file
+  // contour_cost.txt
+  std::ifstream in(DIRECTORY + "contour_cost.txt");
+  std::vector<unsigned> contourCost(LABELS);
+  for (int i = 0; i < LABELS; i++) {
+    double percent;
+    in >> percent;
+    contourCost[i] = GAMMA * exp(-percent);
+  }
 
   mrf.width = imgs[0].cols;
   mrf.height = imgs[0].rows;
@@ -213,7 +193,7 @@ void InitDataCost(const std::vector<cv::Mat> &imgs, const cv::Mat &fill_region,
     for (int x = 0; x < mrf.width; x++) {
       for (int i = 0; i < LABELS; i++) {
         mrf.grid[y * imgs[0].cols + x].msg[DATA][i] =
-            DataCost(imgs, x, y, i) + ContourCost(fill_region, i);
+            DataCost(imgs, x, y, i) + contourCost[i];
       }
     }
   }
