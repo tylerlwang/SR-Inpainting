@@ -14,7 +14,7 @@ enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 // parameters, specific to dataset
 const int BP_ITERATIONS = 40;
 const int LABELS = 13;
-const int LAMBDA = 50;
+const int LAMBDA = 10;
 const int GAMMA = 50;
 const std::string DIRECTORY = "../Datasets/Current/topk";
 
