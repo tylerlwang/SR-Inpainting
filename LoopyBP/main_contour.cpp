@@ -129,23 +129,23 @@ unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
 
   // Value-based smoothness cost
   unsigned cost = 0;
-  cv::Vec3b x_j = imgs[j].at<cv::Vec3b>(y, x);
-  cv::Vec3b x_i;
+  cv::Vec3b x_i = imgs[i].at<cv::Vec3b>(y, x);
+  cv::Vec3b x_j;
   switch (direction) {
     case LEFT:
-      x_i = imgs[i].at<cv::Vec3b>(y, x - 1);
+      x_j = imgs[i].at<cv::Vec3b>(y, x - 1);
       break;
 
     case RIGHT:
-      x_i = imgs[j].at<cv::Vec3b>(y, x + 1);
+      x_j = imgs[i].at<cv::Vec3b>(y, x + 1);
       break;
 
     case UP:
-      x_i = imgs[j].at<cv::Vec3b>(y - 1, x);
+      x_j = imgs[i].at<cv::Vec3b>(y - 1, x);
       break;
 
     case DOWN:
-      x_i = imgs[j].at<cv::Vec3b>(y + 1, x);
+      x_j = imgs[i].at<cv::Vec3b>(y + 1, x);
       break;
 
     default:
@@ -154,7 +154,7 @@ unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
   }
 
   for (int rgb = 0; rgb < 3; rgb++) {
-    cost += (x_i.val[rgb] - x_j.val[rgb]) * (x_i.val[rgb] - x_j.val[rgb]) / 3;
+    cost += abs(x_i.val[rgb] - x_j.val[rgb]) / 3;
   }
   return LAMBDA * cost;
 }
@@ -211,13 +211,13 @@ void SendMsg(const std::vector<cv::Mat> &imgs, MRF2D &mrf, int x, int y,
       unsigned p = 0;
 
       p += SmoothnessCost(imgs, x, y, i, j, direction);
-      p += mrf.grid[y * width + x].msg[DATA][j];
+      p += mrf.grid[y * width + x].msg[DATA][i];
 
       // Exclude the incoming message direction that we are sending to
-      if (direction != LEFT) p += mrf.grid[y * width + x].msg[LEFT][j];
-      if (direction != RIGHT) p += mrf.grid[y * width + x].msg[RIGHT][j];
-      if (direction != UP) p += mrf.grid[y * width + x].msg[UP][j];
-      if (direction != DOWN) p += mrf.grid[y * width + x].msg[DOWN][j];
+      if (direction != LEFT) p += mrf.grid[y * width + x].msg[LEFT][i];
+      if (direction != RIGHT) p += mrf.grid[y * width + x].msg[RIGHT][i];
+      if (direction != UP) p += mrf.grid[y * width + x].msg[UP][i];
+      if (direction != DOWN) p += mrf.grid[y * width + x].msg[DOWN][i];
 
       min_val = std::min(min_val, p);
     }
@@ -331,19 +331,19 @@ unsigned MAP(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
       if (x - 1 >= 0)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[y * width + x - 1].best_assignment, RIGHT);
+                           mrf.grid[y * width + x - 1].best_assignment, LEFT);
       if (x + 1 < width)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[y * width + x + 1].best_assignment, LEFT);
+                           mrf.grid[y * width + x + 1].best_assignment, RIGHT);
       if (y - 1 >= 0)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[(y - 1) * width + x].best_assignment, DOWN);
+                           mrf.grid[(y - 1) * width + x].best_assignment, UP);
       if (y + 1 < height)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[(y + 1) * width + x].best_assignment, UP);
+                           mrf.grid[(y + 1) * width + x].best_assignment, DOWN);
     }
   }
 
