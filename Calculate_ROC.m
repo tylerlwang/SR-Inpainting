@@ -24,3 +24,4 @@ for threshold = 0:0.05:1
     roc(ind) = nnz(rs) / nnz(mask);
     ind = ind + 1;
 end
+plot(0:0.05:1, roc);
