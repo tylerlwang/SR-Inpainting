@@ -33,4 +33,4 @@ delete ../Datasets/Current/contour_cost.txt
 
 % 4. Draw ROC(Receiver Operating Characteristic) graphs
 cd ..;
-calculate_ROC;
+Calculate_ROC;
