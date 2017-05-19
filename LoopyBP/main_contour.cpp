@@ -6,7 +6,7 @@
 #include <vector>
 
 /* The following files are the input of this program and should be store in
- * DIRECTORY: fill_region.png; 1.png, 2.png, ..., 13.png; contour1.png,
+ * DIRECTORY: input.png; 1.png, 2.png, ..., 13.png; contour1.png,
  * contour2.png, ..., contour13.png */
 
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
@@ -16,7 +16,7 @@ const int BP_ITERATIONS = 40;
 const int GAMMA = 1;
 const int LABELS = 13;
 const int LAMBDA = 100;
-const std::string DIRECTORY = "../Datasets/workingset/";
+const std::string DIRECTORY = "../Datasets/current/";
 const cv::Vec3b FILL_COLOR = {0, 255, 0};
 
 struct Pixel {

@@ -6,7 +6,7 @@
 #include <vector>
 
 /* The following files are the input of this program and should be store in
- * DIRECTORY: fill_region.png; 1.png, 2.png, ..., 13.png; contour1.png,
+ * DIRECTORY: input.png; 1.png, 2.png, ..., 13.png; contour1.png,
  * contour2.png, ..., contour13.png */
 
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
@@ -15,7 +15,7 @@ enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 const int BP_ITERATIONS = 40;
 const int LABELS = 13;
 const int LAMBDA = 100;
-const std::string DIRECTORY = "../Datasets/workingset/";
+const std::string DIRECTORY = "../Datasets/current/";
 
 struct Pixel {
   // Each pixel has 5 'message box' to store incoming data
