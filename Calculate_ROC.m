@@ -4,7 +4,7 @@ output2 = imread('Datasets/Current/output_improved.png');
 output3 = imread('Datasets/Current/output_contour.png');
 groundTruth = imread('Datasets/Current/groundTruth.png');
 filled_image = imread('Datasets/Current/input.png');
-fillColor = [255 255 255];
+fillColor = [0 255 0];
 mask = filled_image(:,:,1)==fillColor(1) & ...
     filled_image(:,:,2)==fillColor(2) & filled_image(:,:,3)==fillColor(3);
 
