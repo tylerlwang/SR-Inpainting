@@ -31,5 +31,4 @@ for i = 1:3
     plot(0:0.05:1, roc);
     hold on
 end
-legend('original','improved','contour')
-
+legend('original','improved','contour');

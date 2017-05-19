@@ -10,7 +10,7 @@ mask = original_image(:,:,1)==fillColor(1) & ...
 weights = zeros(13,1);
 
 for ind = 1:13
-    imgFile = ['../Datasets/Current/' num2str(ind) '.png'];
+    imgFile = ['../Datasets/Current/topk' num2str(ind) '.png'];
     output_image = imread(imgFile);
     image_masked = cat(3,output_image(:,:,1).*uint8(mask),output_image(:,:,2).*uint8(mask),...
         output_image(:,:,3).*uint8(mask));

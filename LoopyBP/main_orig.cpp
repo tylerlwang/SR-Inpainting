@@ -14,7 +14,7 @@ enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 const int BP_ITERATIONS = 40;
 const int LABELS = 13;
 const int LAMBDA = 100;
-const std::string DIRECTORY = "../Datasets/current/";
+const std::string DIRECTORY = "../Datasets/Current/orig";
 
 struct Pixel {
   // Each pixel has 5 'message box' to store incoming data
