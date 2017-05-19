@@ -4,7 +4,7 @@ output2 = imread('Datasets/Current/output_improved.png');
 output3 = imread('Datasets/Current/output_contour.png');
 groundTruth = imread('Datasets/Current/groundTruth.png');
 filled_image = imread('Datasets/Current/input.png');
-fillColor = [0 0 0];
+fillColor = [0 255 0];
 mask = filled_image(:,:,1)==fillColor(1) & ...
     filled_image(:,:,2)==fillColor(2) & filled_image(:,:,3)==fillColor(3);
 
@@ -28,5 +28,8 @@ for i = 1:3
         roc(ind) = nnz(rs) / nnz(mask);
         ind = ind + 1;
     end
+    plot(0:0.05:1, roc);
+    hold on
 end
-plot(0:0.05:1, roc);
+legend('original','improved','contour')
+
