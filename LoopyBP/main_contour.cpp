@@ -16,7 +16,7 @@ const int BP_ITERATIONS = 40;
 const int LABELS = 13;
 const int LAMBDA = 10;
 const int GAMMA = 50;
-const std::string DIRECTORY = "../Datasets/Current/topk";
+const std::string DIRECTORY = "../Datasets/Current/";
 
 struct Pixel {
   // Each pixel has 5 'message box' to store incoming data
@@ -44,7 +44,7 @@ unsigned MAP(const std::vector<cv::Mat> &imgs, MRF2D &mrf);
 int main() {
   std::vector<cv::Mat> imgs(LABELS);
   for (int i = 0; i < LABELS; i++) {
-    std::string file = DIRECTORY + std::to_string(i + 1) + ".png";
+    std::string file = DIRECTORY + "topk" + std::to_string(i + 1) + ".png";
     imgs[i] = cv::imread(file.c_str(), 1);
     if (!imgs[i].data) {
       std::cerr << "Error reading image " << i + 1 << std::endl;
