@@ -20,9 +20,10 @@ cd Exemplar-Based_Inpainting;
 %     imwrite(uint8(inpainted), ['../Datasets/Current/', num2str(i), '.png']);
 % end
 
-% 2. Run C++ program loopy belief propagation
+% 2. Run C++ programs loopy belief propagation
 cd ../LoopyBP;
 system('./bp_orig');
 
-% 3. Draw an ROC graph
+% 3. Draw ROC(Receiver Operating Characteristic) graphs
 cd ../Datasets/Current;
+
