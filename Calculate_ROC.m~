@@ -9,7 +9,7 @@ mask = filled_image(:,:,1)==fillColor(1) & ...
     filled_image(:,:,2)==fillColor(2) & filled_image(:,:,3)==fillColor(3);
 
 for i = 1:3
-    output = eval(strcat('output', num2str(i)));
+    output = eval(strcat('output', i]));
     ind = 1;
     for threshold = 0:0.05:1
         rs = true(nnz(mask),1);
