@@ -14,7 +14,7 @@ enum DIRECTION { LEFT, RIGHT, UP, DOWN, DATA };
 // parameters, specific to dataset
 const int BP_ITERATIONS = 40;
 const int LABELS = 13;
-const int LAMBDA = 10;
+const int LAMBDA = 1;
 const int GAMMA = 50;
 const std::string DIRECTORY = "../Datasets/Current/";
 
@@ -129,35 +129,34 @@ unsigned SmoothnessCost(const std::vector<cv::Mat> &imgs, int x, int y, int i,
 
   // Value-based smoothness cost
   unsigned cost = 0;
-  for (int rgb = 0; rgb < 3; rgb++) {
-    unsigned x_i = imgs[i].at<cv::Vec3b>(y, x).val[rgb];
+  cv::Vec3b x_j = imgs[j].at<cv::Vec3b>(y, x);
+  cv::Vec3b x_i;
+  switch (direction) {
+    case LEFT:
+      x_i = imgs[i].at<cv::Vec3b>(y, x - 1);
+      break;
 
-    unsigned x_j;
-    switch (direction) {
-      case LEFT:
-        x_j = imgs[j].at<cv::Vec3b>(y, x - 1).val[rgb];
-        break;
+    case RIGHT:
+      x_i = imgs[j].at<cv::Vec3b>(y, x + 1);
+      break;
 
-      case RIGHT:
-        x_j = imgs[j].at<cv::Vec3b>(y, x + 1).val[rgb];
-        break;
+    case UP:
+      x_i = imgs[j].at<cv::Vec3b>(y - 1, x);
+      break;
 
-      case UP:
-        x_j = imgs[j].at<cv::Vec3b>(y - 1, x).val[rgb];
-        break;
+    case DOWN:
+      x_i = imgs[j].at<cv::Vec3b>(y + 1, x);
+      break;
 
-      case DOWN:
-        x_j = imgs[j].at<cv::Vec3b>(y + 1, x).val[rgb];
-        break;
-
-      default:
-        assert(0);
-        break;
-    }
-
-    cost += (x_i - x_j) * (x_i - x_j) / 3;
+    default:
+      assert(0);
+      break;
   }
-  return cost / LAMBDA;
+
+  for (int rgb = 0; rgb < 3; rgb++) {
+    cost += (x_i.val[rgb] - x_j.val[rgb]) * (x_i.val[rgb] - x_j.val[rgb]) / 3;
+  }
+  return LAMBDA * cost;
 }
 
 void InitDataCost(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
@@ -332,19 +331,19 @@ unsigned MAP(const std::vector<cv::Mat> &imgs, MRF2D &mrf) {
       if (x - 1 >= 0)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[y * width + x - 1].best_assignment, LEFT);
+                           mrf.grid[y * width + x - 1].best_assignment, RIGHT);
       if (x + 1 < width)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[y * width + x + 1].best_assignment, RIGHT);
+                           mrf.grid[y * width + x + 1].best_assignment, LEFT);
       if (y - 1 >= 0)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[(y - 1) * width + x].best_assignment, UP);
+                           mrf.grid[(y - 1) * width + x].best_assignment, DOWN);
       if (y + 1 < height)
         energy +=
             SmoothnessCost(imgs, x, y, cur_label,
-                           mrf.grid[(y + 1) * width + x].best_assignment, DOWN);
+                           mrf.grid[(y + 1) * width + x].best_assignment, UP);
     }
   }
 
