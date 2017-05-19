@@ -22,8 +22,8 @@ function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaint3(imgFilename,fil
 %   close; movie(mov); % grab some popcorn 
 %
 %   author: Sooraj Bhat
-%   Modified by Marcel Davey & John Gu on
-%   11/30/05 to run on Matlab 7.0.4.365 (R14) Service Pack 2
+%   Modified by Jiacheng Guo & Tyler L.Wang
+%   05/19/2017 to run on Matlab R2016b
    
 
 warning off MATLAB:divideByZero

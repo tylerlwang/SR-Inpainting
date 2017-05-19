@@ -1,5 +1,4 @@
 clear;
-
 % 1. Perform exemplar-based inpainting 13 times
 w = [2 2 3 3 4 4 5 5 6 6 7 7 8];  % patch size = 2 * w + 1
 fillColor = [255 255 255];

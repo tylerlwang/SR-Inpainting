@@ -8,12 +8,7 @@ function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaintK(imgFilename,fil
 %   fillFilename   Filename of the image specifying the fill region. 
 %   fillColor      1x3 RGB vector specifying the color used to specify
 %                  the fill region.
-%   w              Patch size using for inpainting, actual patch size is 2
-%                  * 2 + 1
-%   dataTerm       Dataterm used for calculating priority, options are: 
-%                  'isophote', 'tensor', 'sparse'
-%   K              The number of Top K patches 
-
+%   w              Size of the patch size using for inpa
 % Outputs:
 %   inpaintedImg   The inpainted image; an MxNx3 matrix of doubles. 
 %   origImg        The original image; an MxNx3 matrix of doubles.
@@ -23,7 +18,7 @@ function [inpaintedImg,origImg,fillImg,C,D,fillMovie] = inpaintK(imgFilename,fil
 %   fillMovie      A Matlab movie struct depicting the fill region over time. 
 %
 % Example:
-%   [i1,i2,i3,c,d,mov] = inpaint('B0.png','B1.png',[0 255 0],5,'isophote',3);
+%   [i1,i2,i3,c,d,mov] = inpaint('bungee0.png','bungee1.png',[0 255 0]);
 %   plotall;           % quick and dirty plotting script
 %   close; movie(mov); % grab some popcorn 
 %
