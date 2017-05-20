@@ -6,7 +6,7 @@ USE WITHOUT ANY WARRENTY
 ## Overview
 The novel part of this paper was repeating image inpainting 13 times with 13 different parameter settings and using loopy belief propagation to combine them into 1. We implemented the paper's idea and also propsed our own algorithm.
 
-In exemplar-based inpainting, we changed the texture synthesis method from the best-match-patch method to the top-K-patch method, and we also implemented three different methods to calculate the priority during the texture synthesis process.
+In exemplar-based inpainting, we changed the texture synthesis method from the best-match-patch method to the top-K-patch method. We also implemented 3 different methods to calculate the priority during the texture synthesis process.
 
 In loopy belief propagation, we changed both the data cost and the smoothness cost in the energy function, and added a contour-based term to encourage contour continuity. This improved the combination results especially when the image was highly structural.
 
