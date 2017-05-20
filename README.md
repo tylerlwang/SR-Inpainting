@@ -13,9 +13,9 @@ In loopy belief propagation, we changed both the data cost and the smoothness co
 We quantified the inpainting quality using our rate of correctness graph.
 
 ## How can I use the code?
-Put your input images in the "Datasets/Current" folder and rename them to `"input.png"` and `"groundTruth.png"`. `"input.png"` gives information about the filling region in the default absolute white color (255, 255, 255) if you didn't change `fillColor = [255 255 255]` in these `main.m`, `Calculate_ROC`, `Contour_Gb/calculate_cost.m` files. There are sample images in the "Datasets/Current" folder for your reference, just run the `main.m` to check the results.
+Put your input images in the "Datasets/Current" folder and rename them to `"input.png"` and `"groundTruth.png"`. `"input.png"` gives information about the filling region in the default absolute white color (255, 255, 255) if you didn't change `fillColor = [255 255 255]` in these `main.m`, `Calculate_ROC.m`, `Contour_Gb/calculate_cost.m` files. There are sample images in the "Datasets/Current" folder for your reference, just run the `main.m` to check the results.
 
-Run "main" in Matlab and the output will be found in "Datasets/Current." You could also use different parameter settings by changing patch size 'w', data term 'dataTerm', and number of best-match-patch 'K' in 'main.m' file.
+Run "main" in Matlab and the output will be found in "Datasets/Current." You could also use different parameter settings by changing patch size `w`, data term `dataTerm`, and number of best-match-patch `K` in `main.m` file.
 
 You may need to recompile the `bestexemplarhelperK.c` if you're not using 64-bit Mac OS, just type: `mex bestexemplarhelperK.c` in the "Exemplar-Based_Inpainting/" folder.
 
