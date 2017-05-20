@@ -35,7 +35,8 @@ You might need to recompile the code for loopy belief propagation. The `OpenCV3`
 
 ## Datasets
 We tested our program on the `TUM-Image Inpainting Database.` It can be downloaded here: https://www.mmk.ei.tum.de/tumiid/. 
-You may need to use `processMask.m` file to pre-process the mask files in this dataset, because they only have one color channel while our program requires three.
+
+You need to use `processMask.m` to pre-process the mask files in this dataset, because they only have 1 color channel whereas our program requires 3.
 
 ## Acknowledgement
 The code for loopy belief propagatin has referenced (2).
