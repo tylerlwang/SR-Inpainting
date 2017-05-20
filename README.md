@@ -13,7 +13,7 @@ In loopy belief propagation, we changed both the data cost and the smoothness co
 We quantified the inpainting quality using our rate of correctness graph.
 
 ## How can I use the code?
-Run "main" in Matlab. It runs 3 different methods when using loopy belief propagation to combine 13 inpainted images: the paper's energy function called "original," our improved energy function called "improved," and our function plus a contour-based term called "contour."
+Run "main" in Matlab. It runs 3 different methods of loopy belief propagation to combine 13 inpainted images: the paper's energy function called "original," our improved energy function called "improved," and our function plus a contour-based term called "contour."
 
 The inputs are 2 images in the "Datasets/Current" folder: "groundTruth.png" and "input.png." "groundTruth.png" is an original image file, and "input.png" gives information about a filling region in the absolute white color (255, 255, 255).
 
