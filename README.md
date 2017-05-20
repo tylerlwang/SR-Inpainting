@@ -6,7 +6,7 @@ USE WITHOUT ANY WARRENTY
 ## What has been achieved in this project?
 The novel part of this paper was repeating image inpainting 13 times with 13 different parameter settings and using loopy belief propagation to combine them into 1. We implemented the paper's idea and also propsed our own algorithm.
 
-In exemplar-based inpainting, we changed the texture synthesis method from the best-match-patch method to the top-K-patch method.
+In exemplar-based inpainting, we changed the texture synthesis method from the best-match-patch method to the top-K-patch method, and we also implemented three different methods to calculate the priority during the texture synthesis process.
 
 In loopy belief propagation, we changed both the data cost and the smoothness cost in the energy function, and added a contour-based term to encourage contour continuity. This improved the combination results especially when the image was highly structural.
 
@@ -19,6 +19,11 @@ The inputs are 2 images in the "Datasets/Current" folder: "groundTruth.png" and 
 
 When "main" is run, a "rate of correctness" graph will be drawn automatically in Matlab. Output images will be stored in the "Datasets/Current" folder (same as input). 13 images inpainted with the best-match-patch method will be saved as "orig1," ... "orig13," and 13 images inpainted with the top-k-patch method will be saved as "topk1," ... "topk13." The final combination results of these 13 images using the "original" method, the "improved" method, and the "contour" method will be saved as "output_orig.png," "output_improved," and "output_contour," respectively.
 
+Put your input images in the "Datasets/Current" folder and rename them to `"input.png"` and `"groundTruth.png"`. `"input.png"` gives information about the filling region in the default absolute white color (255, 255, 255) if you didin't change `fillColor = [255 255 255];` in these `main.m`, `Calculate_ROC`, `Contour_Gb/calculate_cost.m` files. There are sample images in the "Datasets/Current" folder for your reference, just run the `main.m` to check the results.
+
+Run "main" in Matlab and the output will be found in "Datasets/Current." You could also use different parameter settings by changing patch size 'w', data term 'dataTerm', and number of best-match-patch 'K' in 'main.m' file.
+
+You may need to recompile the `bestexemplarhelperK.c` if you're not using 64-bit Mac OS, just type: `mex bestexemplarhelperK.c` in the "Exemplar-Based_Inpainting/" folder.
 
 ## What dependencies do I need?
 The code for loopy belief propagation was written in C++ and compiled with clang on macOS Sierra. The OpenCV3 library is needed if you are using Linux and want to recompile the files. "main_orig.cpp" generates "bp_orig", "main_improved.cpp" generates "bp_improved", and "main_contour.cpp" generates "bp_contour."
