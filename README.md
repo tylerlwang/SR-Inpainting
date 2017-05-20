@@ -1,5 +1,8 @@
 # SR-Inpainting
-This is A computer vision project based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1).
+
+Our GitHub repository: https://github.com/tylerlwang/SR-Inpainting.
+
+This is Jiacheng Guo and Tyler Lemeng Wang's project for ENGN2560 Computer Vision based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1).
 
 USE WITHOUT ANY WARRENTY
 
@@ -31,14 +34,15 @@ You might need to recompile the code for exemplar-based inpainting. In the folde
 You might need to recompile the code for loopy belief propagation. The `OpenCV3` library is needed. Adjust `Makefile` flags to find your `OpenCV3` library. "main_orig.cpp" should generate "bp_orig", "main_improved.cpp" should generate "bp_improved", and "main_contour.cpp" should generate "bp_contour."
 
 ## Datasets
-We tested our program on the `TUM-Image Inpainting Database.` It can be downloaded here: https://www.mmk.ei.tum.de/tumiid/.
+We tested our program on the `TUM-Image Inpainting Database.` It can be downloaded here: https://www.mmk.ei.tum.de/tumiid/. 
+You may need to use `processMask.m` file to pre-process the mask files in this dataset, because they only have one color channel while our program requires three.
 
 ## Acknowledgement
 The code for loopy belief propagatin has referenced (2).
 
 The code for contour detection was provided by (3).
 
-The code for super-resolution inpainting and edge detection might be useful for future studies, but is not used in the current main function. The code for super-resolution inpainting was provided by (4). The code for edge detection was provided by (5).
+The code for super-resolution inpainting was provided by (4). 
 
 ## Citations
 (1). Le Meur, Olivier, Mounira Ebdelli, and Christine Guillemot. "Hierarchical super-resolution-based inpainting." IEEE transactions on image processing 22.10 (2013): 3779-3790.
@@ -48,5 +52,3 @@ The code for super-resolution inpainting and edge detection might be useful for 
 (3). Marius Leordeanu. "Generalized Boundary (Gb) Detector." https://sites.google.com/site/gbdetector/.
 
 (4). Kwang In Kim and Younghee Kwon. "Example-based Learning for Single-Image Super-resolution." https://people.mpi-inf.mpg.de/~kkim/supres/supres.htm.
-
-(5). UCBerkeley Computer Vision Group. "Contour Detection and Image Segmentation Resources." https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html.
