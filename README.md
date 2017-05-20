@@ -21,7 +21,7 @@ When "main" is run, a "rate of correctness" graph will be drawn automatically in
 
 To change the inpainting parameters, you can modify the patch size `w`, data term `dataTerm`, and number of best-match patches `K` in `main.m.`
 
-If you would like to down-sample the images before inpainting, and upscale to its native resolution after combination, you could use the functions `Down_Sampling/startdownsample.m` and `Super_Resolustion/SuperresCode.m.` They are not called in `main.m.`
+If you would like to down-sample the images before the inpainting, and upscale to its native resolution after the combination, you could use the functions `Down_Sampling/startdownsample.m` and `Super_Resolustion/SuperresCode.m.` They are not called in `main.m.`
 
 ## Compilation
 All C++ code has been compiled with clang on macOS Sierra. You should be fine if you are using a 64-bit macOS. Please continue reading if you are using Linux.
