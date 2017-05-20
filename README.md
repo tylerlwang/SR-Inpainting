@@ -1,5 +1,5 @@
 # SR-Inpainting
-This is A computer vision project based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1)
+This is A computer vision project based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1).
 
 USE WITHOUT ANY WARRENTY
 
@@ -13,6 +13,12 @@ In loopy belief propagation, we changed both the data cost and the smoothness co
 We quantified the inpainting quality using our rate of correctness graph.
 
 ## How can I use the code?
+Run "main" in Matlab. It runs 3 different methods of loopy belief propagation to combine 13 inpainted images: the paper's energy function called "original," our improved energy function called "improved," and our function plus a contour-based term called "contour."
+
+The inputs are 2 images in the "Datasets/Current" folder: "groundTruth.png" and "input.png." "groundTruth.png" is an original image file, and "input.png" gives information about a filling region in the absolute white color (255, 255, 255).
+
+When "main" is run, a "rate of correctness" graph will be drawn automatically in Matlab. Output images will be stored in the "Datasets/Current" folder (same as input). 13 images inpainted with the best-match-patch method will be saved as "orig1," ... "orig13," and 13 images inpainted with the top-k-patch method will be saved as "topk1," ... "topk13." The final combination results of these 13 images using the "original" method, the "improved" method, and the "contour" method will be saved as "output_orig.png," "output_improved," and "output_contour," respectively.
+
 Put your input images in the "Datasets/Current" folder and rename them to `"input.png"` and `"groundTruth.png"`. `"input.png"` gives information about the filling region in the default absolute white color (255, 255, 255) if you didn't change `fillColor = [255 255 255]` in these `main.m`, `Calculate_ROC.m`, `Contour_Gb/calculate_cost.m` files. There are sample images in the "Datasets/Current" folder for your reference, just run the `main.m` to check the results.
 
 Run "main" in Matlab and the output will be found in "Datasets/Current." You could also use different parameter settings by changing patch size `w`, data term `dataTerm`, and number of best-match-patch `K` in `main.m` file.
