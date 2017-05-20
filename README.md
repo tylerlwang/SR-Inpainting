@@ -1,7 +1,7 @@
 # SR-Inpainting
 This is A computer vision project based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1)
 
-USE WITHOUT ANY WARRENT
+USE WITHOUT ANY WARRENTY
 
 ## What has been achieved in this project?
 The novel part of this paper was repeating image inpainting 13 times with 13 different parameter settings and using loopy belief propagation to combine them into 1. We implemented the paper's idea and also propsed our own algorithm.
@@ -27,13 +27,15 @@ The code for loopy belief propagatin has referenced (2).
 
 The code for contour detection was provided by (3).
 
-The code for edge detection was provided by (4), it is not used in our final main function.
+The code for super-resolution inpainting and edge detection might be useful for future studies, but is not used in the current main function. The code for super-resolution inpainting was provided by (4). The code for edge detection was provided by (5).
 
 ## Citations
 (1). Le Meur, Olivier, Mounira Ebdelli, and Christine Guillemot. "Hierarchical super-resolution-based inpainting." IEEE transactions on image processing 22.10 (2013): 3779-3790.
 
-(2). Ho, N. "Loopy belief propagation Markov Random Field stereo vision." LBP Code Example.
+(2). Ho, N. "Loopy belief propagation Markov Random Field stereo vision." http://nghiaho.com/?page_id=1366.
 
 (3). Marius Leordeanu. "Generalized Boundary (Gb) Detector." https://sites.google.com/site/gbdetector/.
 
-(4). UCBerkeley Computer Vision Group. "Contour Detection and Image Segmentation Resources." https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html.
+(4). Kwang In Kim and Younghee Kwon. "Example-based Learning for Single-Image Super-resolution." https://people.mpi-inf.mpg.de/~kkim/supres/supres.htm.
+
+(5). UCBerkeley Computer Vision Group. "Contour Detection and Image Segmentation Resources." https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html.
