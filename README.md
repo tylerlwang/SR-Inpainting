@@ -13,17 +13,15 @@ In loopy belief propagation, we changed both the data cost and the smoothness co
 We quantified the inpainting quality using our rate of correctness graph.
 
 ## Usage
-Put your input images in the "Datasets/Current" folder and rename them to `groundTruth.png` and `input.png.` `groundTruth.png` is an original image file, and `input.png` gives information about the filling region in the white color (255, 255, 255) by default. (If you intend to change it, you need to modify `fillColor = [255 255 255]` in all of the 3 files: `main.m`, `Calculate_ROC.m`, and `Contour_Gb/calculate_cost.m`.) Sample inputs are provided in "Datasets/Current".
+Put your input images in the `Datasets/Current` folder and rename them to `groundTruth.png` and `input.png.` `groundTruth.png` is an original image file, and `input.png` gives information about the filling region in the white color (255, 255, 255) by default. (If you intend to change it, you need to modify `fillColor = [255 255 255]` in all of the 3 files: `main.m`, `Calculate_ROC.m`, and `Contour_Gb/calculate_cost.m`.) Sample inputs are provided in `Datasets/Current`.
 
 Run "main" in Matlab. It uses 3 different methods of loopy belief propagation to combine 13 inpainted images: the paper's energy function called "original," our improved energy function called "improved," and our function plus a contour-based term called "contour."
 
-When "main" is run, a "rate of correctness" graph will be drawn automatically in Matlab. Output images will be stored in the "Datasets/Current" folder (same as input). 13 images inpainted with the best-match-patch method will be saved as "orig1," ... "orig13," and 13 images inpainted with the top-k-patch method will be saved as "topk1," ... "topk13." The final combination results of these 13 images using the "original" method, the "improved" method, and the "contour" method will be saved as "output_orig.png," "output_improved," and "output_contour," respectively.
+When "main" is run, a "rate of correctness" graph will be drawn automatically in Matlab. Output images will be stored in the "Datasets/Current" folder (same as input). 13 images inpainted with the best-match-patch method will be saved as "orig1," ... "orig13," and 13 images inpainted with the top-k-patch method will be saved as "topk1," ... "topk13." The final combination results of these 13 images using the "original" method, the "improved" method, and the "contour" method will be saved as `output_orig.png,` `output_improved,` and `output_contour,` respectively.
 
 To change the inpainting parameters, you can modify the patch size `w`, data term `dataTerm`, and number of best-match patches `K` in `main.m.`
 
-If you would like to down-sample the images at the beginning, and upscale to its native resolution at the end, you could use the functions `Down_Sampling/startdownsample.m` and `Super_Resolustion/SuperresCode.m.` They are not included in `main.m.`
-
-You may need to recompile the `bestexemplarhelperK.c` if you're not using 64-bit Mac OS, just type: `mex bestexemplarhelperK.c` in the "Exemplar-Based_Inpainting/" folder.
+If you would like to down-sample the images before inpainting, and upscale to its native resolution after combination, you could use the functions `Down_Sampling/startdownsample.m` and `Super_Resolustion/SuperresCode.m.` They are not called in `main.m.`
 
 ## Compilation
 All C++ code has been compiled with clang on macOS Sierra. You should be fine if you are using a 64-bit macOS. Please continue reading if you are using Linux.
