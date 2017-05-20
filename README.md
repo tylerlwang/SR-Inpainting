@@ -1,5 +1,5 @@
 # SR-Inpainting
-This is A computer vision project based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1)
+This is A computer vision project based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1).
 
 USE WITHOUT ANY WARRENTY
 
@@ -13,9 +13,12 @@ In loopy belief propagation, we changed both the data cost and the smoothness co
 We quantified the inpainting quality using our rate of correctness graph.
 
 ## How can I use the code?
-Put your input images in the "Datasets/Current" folder and rename them to "input.png" and "groundTruth.png". "input.png" gives information about the filling region in the absolute white color (255, 255, 255).
+Run "main" in Matlab. It runs 3 different methods when using loopy belief propagation to combine 13 inpainted images: the paper's energy function called "original," our improved energy function called "improved," and our function plus a contour-based term called "contour."
 
-Run "main" in Matlab and the output will be found in "Datasets/Current."
+The inputs are 2 images in the "Datasets/Current" folder: "groundTruth.png" and "input.png." "groundTruth.png" is an original image file, and "input.png" gives information about a filling region in the absolute white color (255, 255, 255).
+
+When "main" is run, a "rate of correctness" graph will be drawn automatically in Matlab. Output images will be stored in the "Datasets/Current" folder (same as input). 13 images inpainted with the best-match-patch method will be saved as "orig1," ... "orig13," and 13 images inpainted with the top-k-patch method will be saved as "topk1," ... "topk13." The final combination results of these 13 images using the "original" method, the "improved" method, and the "contour" method will be saved as "output_orig.png," "output_improved," and "output_contour," respectively.
+
 
 ## What dependencies do I need?
 The code for loopy belief propagation was written in C++ and compiled with clang on macOS Sierra. The OpenCV3 library is needed if you are using Linux and want to recompile the files. "main_orig.cpp" generates "bp_orig", "main_improved.cpp" generates "bp_improved", and "main_contour.cpp" generates "bp_contour."
