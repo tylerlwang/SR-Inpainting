@@ -30,6 +30,9 @@ You might need to recompile the code for exemplar-based inpainting. In the folde
 
 You might need to recompile the code for loopy belief propagation. The `OpenCV3` library is needed. Adjust `Makefile` flags to find your `OpenCV3` library. "main_orig.cpp" should generate "bp_orig", "main_improved.cpp" should generate "bp_improved", and "main_contour.cpp" should generate "bp_contour."
 
+## Datasets
+We tested our program on the `TUM-Image Inpainting Database.` It can be downloaded here: https://www.mmk.ei.tum.de/tumiid/.
+
 ## Acknowledgement
 The code for loopy belief propagatin has referenced (2).
 
