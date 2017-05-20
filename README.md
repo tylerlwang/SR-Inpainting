@@ -23,6 +23,8 @@ Put your input images in the "Datasets/Current" folder and rename them to `"inpu
 
 Run "main" in Matlab and the output will be found in "Datasets/Current." You could also use different parameter settings by changing patch size `w`, data term `dataTerm`, and number of best-match-patch `K` in `main.m` file.
 
+If you would like to downsample the images at the beginning, and upscale to its native resolution at the end, you could use the functions in `Down_Sampling/startdownsample.m` and `Super_Resolustion/SuperresCode.m`, since we didn't include them explicitly in `main.m`.
+
 You may need to recompile the `bestexemplarhelperK.c` if you're not using 64-bit Mac OS, just type: `mex bestexemplarhelperK.c` in the "Exemplar-Based_Inpainting/" folder.
 
 ## What dependencies do I need?

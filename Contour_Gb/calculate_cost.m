@@ -1,6 +1,4 @@
-% B = bwboundaries(original_image(:,:,2) == 255);
-% B = B{1};
-% linearIndices = sub2ind([size(original_image,1) size(original_image,2)],B(:,1),B(:,2));
+
 clear;
 original_image = imread('../Datasets/Current/input.png');
 % mask = (original_image(:,:,2) == 255);
