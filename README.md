@@ -2,7 +2,7 @@
 
 Our GitHub repository: https://github.com/tylerlwang/SR-Inpainting.
 
-This is Jiacheng Guo and Tyler Lemeng Wang's project for ENGN2560 Computer Vision based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1).
+This is Jiacheng Guo and Tyler Wang's project for ENGN2560 Computer Vision based on the paper "Hierarchical Super-Resolution-Based Inpainting" (1).
 
 USE WITHOUT ANY WARRENTY
 
